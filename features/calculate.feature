@@ -35,3 +35,13 @@ Feature: Calculate the total shipping cost of a basket
     And there is a shipping option called "Basic" with a flat cost of "£5"
     When the basket contains goods with a total value of "£81"
     Then the "Next day" shipping option can not be used
+
+  Scenario: A shipping option can be hidden if the basket weight is below a threshold
+    Given there is a shipping option called "Next day"
+    And the "Next day" shipping option has a flat cost of "£10"
+    And the "Next day" shipping option is only available for orders weighing under "10kg"
+    And there is a shipping option called "Heavy items"
+    And the "Heavy items" shipping option has a flat cost of "£10"
+    And the "Heavy items" shipping option is only available for orders weighing under "30kg"
+    When the basket contains goods with a total weight of "15kg"
+    Then the "Next day" shipping option can not be used
