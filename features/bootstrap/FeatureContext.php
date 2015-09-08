@@ -91,4 +91,36 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->basket->addShippingOption($shippingOption);
     }
 
+    /**
+     * @Given there is a shipping option called :arg1
+     */
+    public function thereIsAShippingOptionCalled($arg1)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Given the :arg1 shipping option has a flat cost of :arg2
+     */
+    public function theShippingOptionHasAFlatCostOf($arg1, $arg2)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Given the :arg1 shipping option is only available for orders weighing under :arg2
+     */
+    public function theShippingOptionIsOnlyAvailableForOrdersWeighingUnder($arg1, $arg2)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @When the basket contains goods with a total weight of :arg1
+     */
+    public function theBasketContainsGoodsWithATotalWeightOf($arg1)
+    {
+        throw new PendingException();
+    }
+
 }
