@@ -1,0 +1,22 @@
+{
+    "name": "drawmyattention/php-shipping-calculator",
+    "description": "A shipping calculator",
+    "require-dev": {
+        "behat/behat": "^3.0",
+        "phpspec/phpspec": "^2.3",
+        "phpunit/phpunit": "^4.8"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Amo Chohan",
+            "email": "amo.chohan@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-0": {
+             "": "src/"
+        }
+     }
+}
