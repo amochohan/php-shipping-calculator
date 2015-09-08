@@ -57,11 +57,8 @@ class ShippingOption
 
     public function isAvailableToBasket(Basket $basket)
     {
-        if ( $this->isCostGreaterThanRequiredGoodsCost($basket->subTotal()) &&
-            $this->isCostLessThanMaxmimumAllowedGoodsCost($basket->subTotal()) ) {
-            return true;
-        }
-        return false;
+        return ($this->isCostGreaterThanRequiredGoodsCost($basket->subTotal()) &&
+            $this->isCostLessThanMaxmimumAllowedGoodsCost($basket->subTotal()) );
     }
 
     public function setMaximumGoodsCostAllowed(Cost $theMaximumCost)
