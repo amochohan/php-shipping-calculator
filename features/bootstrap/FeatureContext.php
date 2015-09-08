@@ -44,6 +44,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function thereIsAShippingOptionCalledWithAFlatPriceOf($name, Cost $aCost)
     {
         $this->shippingOption = ShippingOption::withNameAndFlatCost($name, $aCost);
+        $this->basket->addShippingOption($this->shippingOption);
     }
 
     /**
@@ -75,18 +76,19 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theShippingOptionCanNotBeUsed(ShippingOption $shippingOption)
     {
-        $this->basket->addShippingOption($shippingOption->setMinimumGoodsCost(\Cost::fromFloat(100.0)));
-        $this->basket->addShippingOption(
-            ShippingOption::withNameAndFlatCost('Next day', \Cost::fromFloat(10.0))->setMinimumGoodsCost(\Cost::fromFloat(79.99))
-        );
-        $this->basket->setSubTotal(\Cost::fromFloat(80.0));
-
         $availableMethods = $this->basket->availableShippingMethods();
 
         PHPUnit_Framework_Assert::assertContainsOnlyInstancesOf('ShippingOption', $availableMethods);
         PHPUnit_Framework_Assert::assertNotContains($shippingOption, $availableMethods);
-        PHPUnit_Framework_Assert::assertEquals(1, sizeof($availableMethods));
-        PHPUnit_Framework_Assert::assertEquals('Next day', $availableMethods[0]->name());
-
     }
+
+    /**
+     * @Given there is a shipping option called :name with a flat cost of :aCost available for orders under :totalCost
+     */
+    public function thereIsAShippingOptionCalledWithAFlatCostOfAvailableForOrdersUnder($name, Cost $aCost, Cost $totalCost)
+    {
+        $shippingOption = ShippingOption::withNameAndFlatCost($name, $aCost)->setMaximumGoodsCostAllowed($totalCost);
+        $this->basket->addShippingOption($shippingOption);
+    }
+
 }
