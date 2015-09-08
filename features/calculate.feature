@@ -24,13 +24,13 @@ Feature: Calculate the total shipping cost of a basket
     When the customer applies the "Next day" shipping option to the basket
     Then the shipping total should be "£10"
 
-  Scenario: A shipping cost can be hidden if the goods total is below £100
+  Scenario: A shipping option can be hidden if the goods total is below £100
     Given there is a shipping option called "Next day" with a flat cost of "£10"
     And there is a shipping option called "Premium" with a flat cost of "£0"
     When the basket contains goods with a total value of "£80"
     Then the "Premium" shipping option can not be used
 
-  Scenario: A shipping cost can be hidden if the goods total is above a threshold
+  Scenario: A shipping option can be hidden if the goods total is above a threshold
     Given there is a shipping option called "Next day" with a flat cost of "£10" available for orders under "£80"
     And there is a shipping option called "Basic" with a flat cost of "£5"
     When the basket contains goods with a total value of "£81"
