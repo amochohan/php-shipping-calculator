@@ -31,6 +31,14 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Transform :aWeight
+     */
+    public function transformStringToAWeight($string)
+    {
+        return Weight::fromFloat((float)$string);
+    }
+
+    /**
      * @Transform :shippingOption
      */
     public function transformStringToAShippingOption($string)
@@ -92,35 +100,18 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Given there is a shipping option called :arg1
+     * @Given the :shippingOption shipping option is only available for orders weighing under :aWeight
      */
-    public function thereIsAShippingOptionCalled($arg1)
+    public function theShippingOptionIsOnlyAvailableForOrdersWeighingUnder(ShippingOption $shippingOption, Weight $aWeight)
     {
-        throw new PendingException();
+        $shippingOption->setMaximumBasketWeight($aWeight);
     }
 
     /**
-     * @Given the :arg1 shipping option has a flat cost of :arg2
+     * @When the basket contains goods with a total weight of :aWeight
      */
-    public function theShippingOptionHasAFlatCostOf($arg1, $arg2)
+    public function theBasketContainsGoodsWithATotalWeightOf(Weight $aWeight)
     {
-        throw new PendingException();
+        $this->basket->setWeight($aWeight);
     }
-
-    /**
-     * @Given the :arg1 shipping option is only available for orders weighing under :arg2
-     */
-    public function theShippingOptionIsOnlyAvailableForOrdersWeighingUnder($arg1, $arg2)
-    {
-        throw new PendingException();
-    }
-
-    /**
-     * @When the basket contains goods with a total weight of :arg1
-     */
-    public function theBasketContainsGoodsWithATotalWeightOf($arg1)
-    {
-        throw new PendingException();
-    }
-
 }
