@@ -17,6 +17,12 @@ class CostSpec extends ObjectBehavior
         $this->shouldHaveType('Cost');
     }
 
+    function it_returns_a_float_value()
+    {
+        $this->float()->shouldEqual(0.0);
+        $this->float()->shouldNotEqual(0);
+    }
+
     function it_checks_if_a_value_equals_the_current_cost()
     {
         $this->equals(\Cost::fromFloat(0.0))->shouldReturn(true);
