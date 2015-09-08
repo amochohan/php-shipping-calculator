@@ -22,7 +22,13 @@ class BasketSpec extends ObjectBehavior
         $this->setSubTotal(\Cost::fromFloat(80.0));
     }
 
-    function it_can_add_a_shipping_option_to_an_array_of_shipping_options()
+    function it_can_get_its_subtotal()
+    {
+        $this->setSubTotal(\Cost::fromFloat(12.34));
+        $this->subTotal()->shouldBeLike(\Cost::fromFloat(12.34));
+    }
+
+    function it_can_add_a_new_shipping_option_to_an_array_of_available_shipping_options()
     {
         $this->addShippingOption(\ShippingOption::withNameAndFlatCost('Next day', \Cost::fromFloat(10.0)));
     }
@@ -54,12 +60,5 @@ class BasketSpec extends ObjectBehavior
         $this->availableShippingMethods()->shouldBeArray();
         $this->availableShippingMethods()->shouldHaveCount(1);
 
-        //$this->availableShippingMethods()->shouldContainOnlyInstancesOf('ShippingOption');
-
-        // We're exposing the name just to satisfy the test as assertEquals/assertSame
-        // doesn't seem to allow me to test the returned object instance is the same
-        // as what I expect in any other way.
-      /*  $this->availableShippingMethods()[0]->shouldBeAnInstanceOf('ShippingOption');
-        $this->availableShippingMethods()[0]->name()->shouldEqual('Next day');*/
     }
 }
