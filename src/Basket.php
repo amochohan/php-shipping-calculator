@@ -6,7 +6,15 @@ class Basket
 
     private $subTotal;
 
+    private $weight;
+
     private $allShippingOptions = [];
+
+    public function __construct()
+    {
+        $this->subTotal = \Cost::fromFloat(0.0);
+        $this->weight = \Weight::fromFloat(0.0);
+    }
 
     public function setSubTotal(Cost $subTotalCost)
     {
@@ -16,6 +24,16 @@ class Basket
     public function subTotal()
     {
         return $this->subTotal;
+    }
+
+    public function weight()
+    {
+        return $this->weight;
+    }
+
+    public function setWeight(Weight $weight)
+    {
+        $this->weight = $weight;
     }
 
     public function allShippingOptions()
@@ -45,5 +63,4 @@ class Basket
 
         return $availableMethods;
     }
-
 }

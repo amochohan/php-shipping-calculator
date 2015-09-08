@@ -12,6 +12,16 @@ class BasketSpec extends ObjectBehavior
         $this->shouldHaveType('Basket');
     }
 
+    function it_has_a_zero_subtotal_when_constructed()
+    {
+        $this->subTotal()->shouldBeLike(\Cost::fromFloat(0.0));
+    }
+
+    function it_has_a_zero_weight_when_constructed()
+    {
+        $this->subTotal()->shouldBeLike(\Cost::fromFloat(0.0));
+    }
+
     function it_can_have_a_shipping_option_applied()
     {
         $this->applyShippingOption(\ShippingOption::withNameAndFlatCost('Next day', \Cost::fromFloat(10.0)));
@@ -45,7 +55,7 @@ class BasketSpec extends ObjectBehavior
         $this->allShippingOptions()[1]->name()->shouldEqual('3-5 day');
     }
 
-    function it_returns_shipping_methods_available_to_the_customer_based_on_their_basket()
+    function it_returns_shipping_methods_available_to_the_customer_based_on_their_basket_cost()
     {
         $this->setSubTotal(\Cost::fromFloat(99.00));
 
@@ -61,4 +71,36 @@ class BasketSpec extends ObjectBehavior
         $this->availableShippingMethods()->shouldHaveCount(1);
 
     }
+
+    function it_can_set_its_weight()
+    {
+        $this->setWeight(\Weight::fromFloat(10.0));
+    }
+
+    function it_can_get_its_weight()
+    {
+        $this->setWeight(\Weight::fromFloat(100.0));
+        $this->weight()->shouldBeLike(\Weight::fromFloat(100.0));
+    }
+
+    function it_returns_shipping_methods_available_to_the_customer_based_on_their_basket_weight()
+    {
+        $this->setWeight(\Weight::fromFloat(15.00));
+
+        $heavyShippingOption = (\ShippingOption::withNameAndFlatCost('Heavy items', \Cost::fromFloat(10.0))->setMaximumBasketWeight(\Weight::fromFloat(30.0)));
+        $mediumShippingOption = (\ShippingOption::withNameAndFlatCost('Medium weight items', \Cost::fromFloat(8.0))->setMaximumBasketWeight(\Weight::fromFloat(20.0)));
+        $lightShippingOption = \ShippingOption::withNameAndFlatCost('Light items', \Cost::fromFloat(6.0))->setMaximumBasketWeight(\Weight::fromFloat(10.0));
+
+        $this->addShippingOption($heavyShippingOption);
+        $this->addShippingOption($mediumShippingOption);
+        $this->addShippingOption($lightShippingOption);
+
+        $this->availableShippingMethods()->shouldBeArray();
+        $this->availableShippingMethods()->shouldHaveCount(2);
+        $this->availableShippingMethods()->shouldContain($heavyShippingOption);
+        $this->availableShippingMethods()->shouldContain($mediumShippingOption);
+        $this->availableShippingMethods()->shouldNotContain($lightShippingOption);
+
+    }
+
 }

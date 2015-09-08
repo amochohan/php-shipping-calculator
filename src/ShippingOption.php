@@ -9,6 +9,8 @@ class ShippingOption
     private $minimumGoodsCostRequired;
     private $maximumGoodsCostAllowed;
 
+    private $maximumBasketWeightAllowed;
+
     public static function withNameAndFlatCost($name, Cost $flatCost)
     {
         $shippingOption = new ShippingOption();
@@ -19,6 +21,8 @@ class ShippingOption
 
         $shippingOption->minimumGoodsCostRequired = \Cost::fromFloat(0.0);
         $shippingOption->maximumGoodsCostAllowed = \Cost::fromFloat(0.0);
+
+        $shippingOption->maximumBasketWeightAllowed = \Weight::fromFloat(0.0);
 
         return $shippingOption;
     }
@@ -39,31 +43,46 @@ class ShippingOption
         return $this;
     }
 
-    public function isCostGreaterThanRequiredGoodsCost(Cost $currentCost)
+    public function isBasketTooCheap(Cost $currentCost)
     {
         if ($this->minimumGoodsCostRequired->float() == 0) {
-            return true;
+            return false;
         }
-        return $currentCost->float() >= $this->minimumGoodsCostRequired->float();
+        return $currentCost->float() < $this->minimumGoodsCostRequired->float();
     }
 
-    public function isCostLessThanMaxmimumAllowedGoodsCost(Cost $currentCost)
+    public function isBasketTooExpensive(Cost $currentCost)
     {
         if ($this->maximumGoodsCostAllowed->float() == 0) {
-            return true;
+            return false;
         }
-        return $currentCost->float() <= $this->maximumGoodsCostAllowed->float();
+        return $currentCost->float() > $this->maximumGoodsCostAllowed->float();
     }
 
     public function isAvailableToBasket(Basket $basket)
     {
-        return ($this->isCostGreaterThanRequiredGoodsCost($basket->subTotal()) &&
-            $this->isCostLessThanMaxmimumAllowedGoodsCost($basket->subTotal()) );
+        return (! $this->isBasketTooCheap($basket->subTotal()) &&
+            ! $this->isBasketTooExpensive($basket->subTotal()) &&
+            ! $this->isBasketTooHeavy($basket->weight()));
     }
 
     public function setMaximumGoodsCostAllowed(Cost $theMaximumCost)
     {
         $this->maximumGoodsCostAllowed = $theMaximumCost;
         return $this;
+    }
+
+    public function setMaximumBasketWeight(Weight $weight)
+    {
+        $this->maximumBasketWeightAllowed = $weight;
+        return $this;
+    }
+
+    public function isBasketTooHeavy(Weight $weight)
+    {
+        if ($this->maximumBasketWeightAllowed->float() == 0) {
+            return false;
+        }
+        return $weight->float() > $this->maximumBasketWeightAllowed->float();
     }
 }

@@ -43,23 +43,23 @@ class ShippingOptionSpec extends ObjectBehavior
     function it_can_check_if_a_cost_is_equal_or_greater_than_its_required_amount()
     {
         $this->setMinimumGoodsCost(\Cost::fromFloat(5.0));
-        $this->isCostGreaterThanRequiredGoodsCost(\Cost::fromFloat(10.0))->shouldReturn(true);
-        $this->isCostGreaterThanRequiredGoodsCost(\Cost::fromFloat(4.0))->shouldReturn(false);
-        $this->isCostGreaterThanRequiredGoodsCost(\Cost::fromFloat(5.0))->shouldReturn(true);
+        $this->isBasketTooCheap(\Cost::fromFloat(10.0))->shouldReturn(false);
+        $this->isBasketTooCheap(\Cost::fromFloat(4.0))->shouldReturn(true);
+        $this->isBasketTooCheap(\Cost::fromFloat(5.0))->shouldReturn(false);
 
         $this->setMinimumGoodsCost(\Cost::fromFloat(0.0));
-        $this->isCostGreaterThanRequiredGoodsCost(\Cost::fromFloat(0.0))->shouldReturn(true);
+        $this->isBasketTooCheap(\Cost::fromFloat(0.0))->shouldReturn(false);
     }
 
     function it_can_check_if_a_cost_is_equal_or_lower_than_its_the_maximum_amount_allowed_for_the_shipping_option()
     {
         $this->setMaximumGoodsCostAllowed(\Cost::fromFloat(50.0));
-        $this->isCostLessThanMaxmimumAllowedGoodsCost(\Cost::fromFloat(50.0))->shouldReturn(true);
-        $this->isCostLessThanMaxmimumAllowedGoodsCost(\Cost::fromFloat(10.0))->shouldReturn(true);
-        $this->isCostLessThanMaxmimumAllowedGoodsCost(\Cost::fromFloat(51.0))->shouldReturn(false);
+        $this->isBasketTooExpensive(\Cost::fromFloat(50.0))->shouldReturn(false);
+        $this->isBasketTooExpensive(\Cost::fromFloat(10.0))->shouldReturn(false);
+        $this->isBasketTooExpensive(\Cost::fromFloat(51.0))->shouldReturn(true);
 
         $this->setMaximumGoodsCostAllowed(\Cost::fromFloat(0.0));
-        $this->isCostLessThanMaxmimumAllowedGoodsCost(\Cost::fromFloat(0.0))->shouldReturn(true);
+        $this->isBasketTooExpensive(\Cost::fromFloat(0.0))->shouldReturn(false);
     }
 
     function it_is_enabled_when_the_basket_cost_is_more_than_or_equal_the_minimum_basket_cost()
@@ -109,9 +109,26 @@ class ShippingOptionSpec extends ObjectBehavior
         $this->isAvailableToBasket($this->basket)->shouldReturn(true);
     }
 
+    function it_can_determine_a_heavy_basket()
+    {
+        $this->basket->setWeight(\Weight::fromFloat(9.0));
+        $this->setMaximumBasketWeight(\Weight::fromFloat(10.0));
+        $this->isBasketTooHeavy($this->basket->weight())->shouldReturn(false);
+
+        $this->basket->setWeight(\Weight::fromFloat(11.0));
+        $this->isBasketTooHeavy($this->basket->weight())->shouldReturn(true);
+
+        $this->basket->setWeight(\Weight::fromFloat(10.0));
+        $this->isBasketTooHeavy($this->basket->weight())->shouldReturn(false);
+    }
+
     function it_sets_a_maximum_goods_cost_before_becoming_unavailable()
     {
         $this->setMaximumGoodsCostAllowed(\Cost::fromFloat(100));
     }
 
+    function it_can_set_a_maximum_basket_weight_before_becoming_unavailable()
+    {
+        $this->setMaximumBasketWeight(\Weight::fromFloat(50.0));
+    }
 }
