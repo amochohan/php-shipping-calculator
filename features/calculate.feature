@@ -52,3 +52,38 @@ Feature: Calculate the total shipping cost of a basket
     When the basket contains goods with a value of £45
     And the customer applies the "Standard delivery" shipping option to the basket
     Then the shipping total should be £5
+
+  Scenario: A shipping option can have a sliding price scale based on the basket weight
+    Given there is a shipping option called "Standard delivery" with a flat cost of £0
+    And the "Standard delivery" shipping option costs £6 for orders weighing under 20kg
+    And the "Standard delivery" shipping option costs £12 for orders weighing between 20kg and 50kg
+    And the "Standard delivery" shipping option costs £15 for orders weighing more than 50kg
+    When the basket contains goods that weigh 30kg
+    And the customer applies the "Standard delivery" shipping option to the basket
+    Then the shipping total should be £12
+
+  Scenario: Shipping option modifiers consider both basket weight and cost when calculating shipping cost
+    Given there is a shipping option called "Standard delivery" with a flat cost of £0
+    And the "Standard delivery" shipping option costs £6 for orders weighing under 20kg
+    And the "Standard delivery" shipping option costs £12 for orders weighing between 20kg and 50kg
+    And the "Standard delivery" shipping option costs £15 for orders weighing more than 50kg
+    And the "Standard delivery" shipping option costs £50 for orders less than £30
+    And the "Standard delivery" shipping option costs £5 for orders between £30 and £50
+    And the "Standard delivery" shipping option costs £0 for orders more than £50
+    When the basket contains goods that weigh 30kg
+    When the basket contains goods with a value of £45
+    And the customer applies the "Standard delivery" shipping option to the basket
+    Then the shipping total should be £12
+
+  Scenario: Shipping option modifiers consider both basket weight and cost when calculating shipping cost
+    Given there is a shipping option called "Standard delivery" with a flat cost of £0
+    And the "Standard delivery" shipping option costs £6 for orders weighing under 20kg
+    And the "Standard delivery" shipping option costs £12 for orders weighing between 20kg and 50kg
+    And the "Standard delivery" shipping option costs £15 for orders weighing more than 50kg
+    And the "Standard delivery" shipping option costs £50 for orders less than £30
+    And the "Standard delivery" shipping option costs £5 for orders between £30 and £50
+    And the "Standard delivery" shipping option costs £0 for orders more than £50
+    When the basket contains goods that weigh 55kg
+    When the basket contains goods with a value of £45
+    And the customer applies the "Standard delivery" shipping option to the basket
+    Then the shipping total should be £15
