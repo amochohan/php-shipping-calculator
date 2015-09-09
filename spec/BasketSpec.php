@@ -22,25 +22,49 @@ class BasketSpec extends ObjectBehavior
         $this->subTotal()->shouldBeLike(\Cost::fromFloat(0.0));
     }
 
-    function it_can_have_a_shipping_option_applied()
-    {
-        $this->applyShippingOption(\ShippingOption::withNameAndFlatCost('Next day', \Cost::fromFloat(10.0)));
-    }
-
     function it_can_set_its_subtotal()
     {
         $this->setSubTotal(\Cost::fromFloat(80.0));
     }
 
-    function it_can_get_its_subtotal()
+    function it_can_return_its_subtotal()
     {
         $this->setSubTotal(\Cost::fromFloat(12.34));
         $this->subTotal()->shouldBeLike(\Cost::fromFloat(12.34));
+        $this->setSubTotal(\Cost::fromFloat(10.0));
+        $this->subTotal()->shouldBeLike(\Cost::fromFloat(10.0));
+        $this->subTotal()->shouldNotBeLike(\Cost::fromFloat(12.4));
+    }
+
+    function it_can_have_a_shipping_option_applied()
+    {
+        $this->applyShippingOption(\ShippingOption::withNameAndFlatCost('Next day', \Cost::fromFloat(10.0)));
+    }
+
+    function it_can_only_have_one_applied_shipping_option()
+    {
+        $nextDayOption = \ShippingOption::withNameAndFlatCost('Next day', \Cost::fromFloat(10.0));
+        $standardOption = \ShippingOption::withNameAndFlatCost('Standard', \Cost::fromFloat(5.0));
+
+        $this->appliedShippingOption()->shouldReturn(null);
+
+        $this->applyShippingOption($nextDayOption);
+        $this->appliedShippingOption()->shouldBeLike($nextDayOption);
+        $this->appliedShippingOption()->shouldNotBeLike($standardOption);
+
+        $this->applyShippingOption($standardOption);
+        $this->appliedShippingOption()->shouldBeLike($standardOption);
+        $this->appliedShippingOption()->shouldNotBeLike($nextDayOption);
     }
 
     function it_can_add_a_new_shipping_option_to_an_array_of_available_shipping_options()
     {
+        $this->allShippingOptions()->shouldBeArray();
+        $this->allShippingOptions()->shouldHaveCount(0);
         $this->addShippingOption(\ShippingOption::withNameAndFlatCost('Next day', \Cost::fromFloat(10.0)));
+        $this->allShippingOptions()->shouldHaveCount(1);
+        $this->addShippingOption(\ShippingOption::withNameAndFlatCost('Standard', \Cost::fromFloat(5.0)));
+        $this->allShippingOptions()->shouldHaveCount(2);
     }
 
     function it_returns_all_shipping_methods_that_have_been_made_available()
@@ -111,4 +135,5 @@ class BasketSpec extends ObjectBehavior
         $this->applyShippingOption($shippingOption);
         $this->shippingCost()->shouldBeLike($cost);
     }
+
 }
