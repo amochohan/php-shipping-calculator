@@ -19,27 +19,36 @@ Feature: Calculate the total shipping cost of a basket
    - Items can be shipped internationally
 
   Scenario: A flat rate shipping charge can be charged
-    Given there is a shipping option called "Next day" with a flat cost of "£10"
-    And there is a shipping option called "3-5 day" with a flat cost of "£4"
+    Given there is a shipping option called "Next day" with a flat cost of £10
+    And there is a shipping option called "Standard delivery" with a flat cost of £4
     When the customer applies the "Next day" shipping option to the basket
-    Then the shipping total should be "£10"
+    Then the shipping total should be £10
 
   Scenario: A shipping option can be hidden if the goods total is below £100
-    Given there is a shipping option called "Next day" with a flat cost of "£10"
-    And there is a shipping option called "Premium" with a flat cost of "£0"
-    When the basket contains goods with a total value of "£80"
-    Then the "Premium" shipping option can not be used
+    Given there is a shipping option called "Next day" with a flat cost of £10
+    And there is a shipping option called "Standard delivery" with a flat cost of £0
+    When the basket contains goods with a total value of £80
+    Then the "Standard delivery" shipping option can not be used
 
   Scenario: A shipping option can be hidden if the goods total is above a threshold
-    Given there is a shipping option called "Next day" with a flat cost of "£10" available for orders under "£80"
-    And there is a shipping option called "Basic" with a flat cost of "£5"
-    When the basket contains goods with a total value of "£81"
+    Given there is a shipping option called "Next day" with a flat cost of £10 available for orders under £80
+    And there is a shipping option called "Standard delivery" with a flat cost of £4
+    When the basket contains goods with a total value of £81
     Then the "Next day" shipping option can not be used
 
   Scenario: A shipping option can be hidden if the basket weight is below a threshold
-    Given there is a shipping option called "Light items" with a flat cost of "£10"
-    And the "Light items" shipping option is only available for orders weighing under "10kg"
-    And there is a shipping option called "Heavy items" with a flat cost of "£10"
-    And the "Heavy items" shipping option is only available for orders weighing under "30kg"
-    When the basket contains goods with a total weight of "15kg"
-    Then the "Light items" shipping option can not be used
+    Given there is a shipping option called "Next day (light)" with a flat cost of £10
+    And the "Next day (light)" shipping option is only available for orders weighing under 10kg
+    And there is a shipping option called "Next day (heavy)" with a flat cost of £10
+    And the "Next day (heavy)" shipping option is only available for orders weighing under 30kg
+    When the basket contains goods with a total weight of 15kg
+    Then the "Next day (light)" shipping option can not be used
+
+  Scenario: A shipping option can have a sliding price scale based on the basket total
+    Given there is a shipping option called "Standard delivery" with a flat cost of £0
+    And the "Standard delivery" shipping option costs £50 for orders less than £30
+    And the "Standard delivery" shipping option costs £5 for orders between £30 and £50
+    And the "Standard delivery" shipping option costs £0 for orders more than £50
+    When the basket contains goods with a value of £45
+    And the customer applies the "Standard delivery" shipping option to the basket
+    Then the shipping total should be £5
