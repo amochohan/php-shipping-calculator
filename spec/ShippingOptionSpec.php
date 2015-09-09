@@ -24,10 +24,14 @@ class ShippingOptionSpec extends ObjectBehavior
         $this->shouldHaveType('ShippingOption');
     }
 
-    function it_gives_its_total_cost()
+    function it_gives_its_total_cost_for_a_basket()
     {
-        $this->totalCost()->shouldBeLike(\Cost::fromFloat(10.0));
-        $this->totalCost()->shouldHaveType('Cost');
+        $cost = \Cost::fromFloat(10.0);
+        $basket = new \Basket();
+        $basket->setSubTotal($cost);
+
+        $this->totalCost($basket)->shouldBeLike($cost);
+        $this->totalCost($basket)->shouldHaveType('Cost');
     }
 
     function it_gives_its_name()
@@ -131,4 +135,17 @@ class ShippingOptionSpec extends ObjectBehavior
     {
         $this->setMaximumBasketWeight(\Weight::fromFloat(50.0));
     }
+
+    function it_can_set_a_cost_modifier()
+    {
+        $priceModifier = new \CostShippingModifier();
+
+        $priceModifier->setCost(\Cost::fromFloat(2.0));
+        $priceModifier->setMinValue(\Cost::fromFloat(10.0));
+        $priceModifier->setMaxValue(\Cost::fromFloat(20.0));
+
+        $this->setModifier($priceModifier);
+    }
+
+
 }
