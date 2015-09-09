@@ -14,16 +14,20 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     private $shippingOption;
     private $basket;
+    private $costShippingModifier ;
 
     public function __construct()
     {
         $this->shippingOption = new ShippingOption();
         $this->basket = new Basket();
+        $this->costShippingModifier = new CostShippingModifier();
     }
 
     /**
      * @Transform :aCost
      * @Transform :totalCost
+     * @Transform :minCost
+     * @Transform :maxCost
      */
     public function transformStringToACost($string)
     {
@@ -43,16 +47,16 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function transformStringToAShippingOption($string)
     {
-        return ShippingOption::withNameAndFlatCost($string, Cost::fromFloat(10.0));
+        return ShippingOption::withNameAndFlatCost($string, Cost::fromFloat(0.0));
     }
 
     /**
-     * @Given there is a shipping option called :name with a flat cost of :aCost
+     * @Given there is a shipping option called :name with a flat cost of £:aCost
      */
     public function thereIsAShippingOptionCalledWithAFlatPriceOf($name, Cost $aCost)
     {
-        $this->shippingOption = ShippingOption::withNameAndFlatCost($name, $aCost);
-        $this->basket->addShippingOption($this->shippingOption);
+        $shippingOption = ShippingOption::withNameAndFlatCost($name, $aCost);
+        $this->basket->addShippingOption($shippingOption);
     }
 
     /**
@@ -60,19 +64,23 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theCustomerAppliesTheShippingOptionToTheBasket(ShippingOption $shippingOption)
     {
-        $this->basket->applyShippingOption($shippingOption);
+        array_map(function($option) use ($shippingOption) {
+            if($option->name() == $shippingOption->name()) {
+                $this->basket->applyShippingOption($option);
+            }
+        }, $this->basket->allShippingOptions());
     }
 
     /**
-     * @Then the shipping total should be :totalCost
+     * @Then the shipping total should be £:totalCost
      */
     public function theShippingTotalShouldBe(Cost $totalCost)
     {
-        PHPUnit_Framework_Assert::assertEquals($totalCost, $this->shippingOption->totalCost());
+        PHPUnit_Framework_Assert::assertEquals($totalCost->float(), $this->basket->shippingCost()->float());
     }
 
     /**
-     * @When the basket contains goods with a total value of :totalCost
+     * @When the basket contains goods with a total value of £:totalCost
      */
     public function theBasketContainsGoodsWithATotalValueOf(Cost $totalCost)
     {
@@ -91,7 +99,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Given there is a shipping option called :name with a flat cost of :aCost available for orders under :totalCost
+     * @Given there is a shipping option called :name with a flat cost of £:aCost available for orders under £:totalCost
      */
     public function thereIsAShippingOptionCalledWithAFlatCostOfAvailableForOrdersUnder($name, Cost $aCost, Cost $totalCost)
     {
@@ -108,10 +116,68 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @When the basket contains goods with a total weight of :aWeight
+     * @When the basket contains goods with a total weight of :aWeight:kg
      */
     public function theBasketContainsGoodsWithATotalWeightOf(Weight $aWeight)
     {
         $this->basket->setWeight($aWeight);
+    }
+
+    /**
+     * @Given the :shippingOption shipping option costs £:aCost for orders less than £:totalCost
+     */
+    public function theShippingOptionCostsForOrdersLessThan(ShippingOption $shippingOption, Cost $aCost, $totalCost)
+    {
+        $costShippingModifier = new CostShippingModifier();
+        $costShippingModifier->setCost($aCost);
+        $costShippingModifier->setMaxValue($totalCost);
+
+        array_map(function($option) use ($shippingOption, $costShippingModifier) {
+            if($option->name() == $shippingOption->name()) {
+                $option->setModifier($costShippingModifier);
+            }
+        }, $this->basket->allShippingOptions());
+
+    }
+
+    /**
+     * @Given the :shippingOption shipping option costs £:aCost for orders between £:minCost and £:maxCost
+     */
+    public function theShippingOptionCostsForOrdersBetweenAnd(ShippingOption $shippingOption, Cost $aCost, Cost $minCost, Cost $maxCost)
+    {
+        $costShippingModifier = new CostShippingModifier();
+        $costShippingModifier->setCost($aCost);
+        $costShippingModifier->setMinValue($minCost);
+        $costShippingModifier->setMaxValue($maxCost);
+
+        array_map(function($option) use ($shippingOption, $costShippingModifier) {
+            if($option->name() == $shippingOption->name()) {
+                $option->setModifier($costShippingModifier);
+            }
+        }, $this->basket->allShippingOptions());
+    }
+
+    /**
+     * @Given the :shippingOption shipping option costs £:aCost for orders more than £:totalCost
+     */
+    public function theShippingOptionCostsForOrdersMoreThan(ShippingOption $shippingOption, Cost $aCost, Cost $totalCost)
+    {
+        $costShippingModifier = new CostShippingModifier();
+        $costShippingModifier->setCost($aCost);
+        $costShippingModifier->setMinValue($totalCost);
+
+        array_map(function($option) use ($shippingOption, $costShippingModifier) {
+            if($option->name() == $shippingOption->name()) {
+                $option->setModifier($costShippingModifier);
+            }
+        }, $this->basket->allShippingOptions());
+    }
+
+    /**
+     * @When the basket contains goods with a value of £:totalCost
+     */
+    public function theBasketContainsGoodsWithAValueOf(Cost $totalCost)
+    {
+        $this->basket->setSubTotal($totalCost);
     }
 }
