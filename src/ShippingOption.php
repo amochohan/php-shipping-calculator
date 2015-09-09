@@ -13,6 +13,8 @@ class ShippingOption
 
     private $modifiers;
 
+    private $multiplier;
+
     public static function withNameAndFlatCost($name, Cost $flatCost)
     {
         $shippingOption = new ShippingOption();
@@ -26,19 +28,29 @@ class ShippingOption
 
         $shippingOption->maximumBasketWeightAllowed = \Weight::fromFloat(0.0);
 
+//        $shippingOption->multiplier = \Multiplier::fromFloat(0.0);
+
         return $shippingOption;
     }
 
     public function totalCost(Basket $basket)
     {
-        if (! $this->costModifiersExist()) {
-            return $this->cost;
+        if ($this->costModifiersExist()) {
+
+            $validModifiers = $this->getApplicableModifiersForBasket($basket);
+
+            if($this->hasValidModifiers($validModifiers)) {
+                $validModifiers = $this->sortModifiersByCostDesc($validModifiers);
+                return $this->getFirstValidModifier($validModifiers)->cost();
+            }
+
         }
 
-        $validModifiers = $this->sortModifiersByCostDesc($this->getApplicableModifiersForBasket($basket));
-
-        if($this->hasValidModifiers($validModifiers)) {
-            return $this->getFirstValidModifier($validModifiers)->cost();
+        // Modifiers weren't assigned so calculate the cost of this
+        // shipping option, by applying any multipliers that may
+        // have been set.
+        if ($this->multiplierExists()) {
+            return $this->applyMultiplierToCost($basket);
         }
 
         // If none of the modifiers are applicable to the current
@@ -135,12 +147,26 @@ class ShippingOption
         $this->modifiers[] = $modifier;
     }
 
-    /**
-     * @return bool
-     */
-    private function costModifiersExist()
+    public function costModifiersExist()
     {
-        return sizeof($this->modifiers) > 0;
+        return !empty($this->modifiers);
+    }
+
+    public function setMultiplier($multiplier)
+    {
+        $this->multiplier = $multiplier;
+    }
+
+    public function multiplierExists()
+    {
+        return !empty($this->multiplier);
+    }
+
+    private function applyMultiplierToCost(Basket $basket)
+    {
+        return \Cost::fromFloat(
+            $this->multiplier->multipliedCost($basket)->float() + $this->cost->float()
+        );
     }
 
 }

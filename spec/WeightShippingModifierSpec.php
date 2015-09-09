@@ -19,6 +19,11 @@ class WeightShippingModifierSpec extends ObjectBehavior
         $this->shouldHaveType('WeightShippingModifier');
     }
 
+    function it_implements_shipping_modifier_contract()
+    {
+        $this->shouldImplement('ShippingModifierContract');
+    }
+
     function it_can_set_its_cost()
     {
         $this->setCost($this->exampleCost);

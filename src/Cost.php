@@ -4,11 +4,6 @@ class Cost
 {
     private $float;
 
-    public function __construct()
-    {
-        $this->total = 0;
-    }
-
     public static function fromFloat($float)
     {
         $cost = new Cost();

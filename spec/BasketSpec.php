@@ -136,4 +136,26 @@ class BasketSpec extends ObjectBehavior
         $this->shippingCost()->shouldBeLike($cost);
     }
 
+    function it_can_have_products_added_to_it()
+    {
+        $this->addProductWithQuantity(new \Product(), 1);
+    }
+
+    function it_can_output_how_many_products_it_holds()
+    {
+        $this->noOfProducts()->shouldReturn(0);
+        $this->addProductWithQuantity(new \Product(), 1);
+        $this->noOfProducts()->shouldReturn(1);
+        $this->addProductWithQuantity(new \Product(), 1);
+        $this->noOfProducts()->shouldReturn(2);
+    }
+
+    function it_can_remove_all_products_from_itself()
+    {
+        $this->noOfProducts()->shouldReturn(0);
+        $this->addProductWithQuantity(new \Product(), 4);
+        $this->noOfProducts()->shouldReturn(4);
+        $this->removeAllProducts();
+        $this->noOfProducts()->shouldReturn(0);
+    }
 }

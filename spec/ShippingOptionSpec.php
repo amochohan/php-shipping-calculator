@@ -147,6 +147,21 @@ class ShippingOptionSpec extends ObjectBehavior
         $this->addModifier($priceModifier);
     }
 
+    function it_can_check_if_a_modifier_has_been_added()
+    {
+        $this->costModifiersExist()->shouldReturn(false);
+
+        $priceModifier = new \CostShippingModifier();
+
+        $priceModifier->setCost(\Cost::fromFloat(2.0));
+        $priceModifier->setMinValue(\Cost::fromFloat(10.0));
+        $priceModifier->setMaxValue(\Cost::fromFloat(20.0));
+
+        $this->addModifier($priceModifier);
+
+        $this->costModifiersExist()->shouldReturn(true);
+    }
+
     function it_sorts_applicable_modifiers_by_cost()
     {
         $standard = new \CostShippingModifier();
@@ -171,6 +186,32 @@ class ShippingOptionSpec extends ObjectBehavior
         $this->sortModifiersByCostDesc($modifiers)[2]->cost()->float()->shouldEqual(3.0);
         $this->sortModifiersByCostDesc($modifiers)[3]->cost()->float()->shouldEqual(2.0);
         $this->sortModifiersByCostDesc($modifiers)[4]->cost()->float()->shouldEqual(0.0);
+
+    }
+
+    function it_can_set_a_cost_multiplier()
+    {
+        $this->setMultiplier(\WeightCostMultiplier::fromFloat(0.06));
+    }
+
+    function it_can_check_if_a_cost_multiplier_has_been_set()
+    {
+        $this->multiplierExists()->shouldReturn(false);
+
+        $this->setMultiplier(\WeightCostMultiplier::fromFloat(0.06));
+
+        $this->multiplierExists()->shouldReturn(true);
+    }
+
+    function it_can_add_the_calculated_multiplier_to_the_base_cost()
+    {
+        $basket = new \Basket();
+        $basket->setWeight(\Weight::fromFloat(55.0));
+
+        $this->setMultiplier(\WeightCostMultiplier::fromFloat(0.06));
+
+        $this->totalCost($basket)->shouldHaveType('Cost');
+        $this->totalCost($basket)->float()->shouldBe((float)13.30);
 
     }
 

@@ -35,6 +35,14 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Transform :weightCostMultiplier
+     */
+    public function transformStringToAWeightCostMultiplier($string)
+    {
+        return WeightCostMultiplier::fromFloat((float)$string);
+    }
+
+    /**
      * @Transform :aWeight
      * @Transform :minWeight
      * @Transform :maxWeight
@@ -238,6 +246,74 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function theBasketContainsGoodsThatWeighKg(Weight $aWeight)
     {
         $this->basket->setWeight($aWeight);
+    }
+
+    /**
+     * @Given the :shippingOption shipping option costs £:aCost for orders containing under :quantity products
+     */
+    public function theShippingOptionCostsPsForOrdersContainingUnderProducts(ShippingOption $shippingOption, $aCost, $quantity)
+    {
+        $modifier = new ProductQuantityShippingModifier();
+        $modifier->setCost($aCost);
+        $modifier->setMaxValue($quantity);
+
+        array_map(function($option) use ($shippingOption, $modifier) {
+            if($option->name() == $shippingOption->name()) {
+                $option->addModifier($modifier);
+            }
+        }, $this->basket->allShippingOptions());
+    }
+
+    /**
+     * @Given the :shippingOption shipping option costs £:aCost for orders containing between :minQuantity and :maxQuantity products
+     */
+    public function theShippingOptionCostsPsForOrdersContainingBetweenAndProducts(ShippingOption $shippingOption, Cost $aCost, $minQuantity, $maxQuantity)
+    {
+        $modifier = new ProductQuantityShippingModifier();
+        $modifier->setCost($aCost);
+        $modifier->setMinValue($minQuantity);
+        $modifier->setMaxValue($maxQuantity);
+
+        array_map(function($option) use ($shippingOption, $modifier) {
+            if($option->name() == $shippingOption->name()) {
+                $option->addModifier($modifier);
+            }
+        }, $this->basket->allShippingOptions());
+    }
+
+    /**
+     * @Given the :shippingOption shipping option costs £:aCost for orders containing more than :quantity products
+     */
+    public function theShippingOptionCostsPsForOrdersContainingMoreThanProducts(ShippingOption $shippingOption, Cost $aCost, $quantity)
+    {
+        $modifier = new ProductQuantityShippingModifier();
+        $modifier->setCost($aCost);
+        $modifier->setMinValue($quantity);
+
+        array_map(function($option) use ($shippingOption, $modifier) {
+            if($option->name() == $shippingOption->name()) {
+                $option->addModifier($modifier);
+            }
+        }, $this->basket->allShippingOptions());
+    }
+
+    /**
+     * @When the basket contains :quantity products
+     */
+    public function theBasketContainsProducts($quantity)
+    {
+        $this->basket->addProductWithQuantity(new Product(), $quantity);
+
+    }
+
+    /**
+     * @Given there is a shipping option called :name with a base cost of £:aCost and a weight multiplier cost of £:weightCostMultiplier
+     */
+    public function thereIsAShippingOptionCalledWithABaseCostOfPsAndAWeightMultiplierCostOfPs($name, Cost $aCost, WeightCostMultiplier $weightCostMultiplier)
+    {
+        $shippingOption = ShippingOption::withNameAndFlatCost($name, $aCost);
+        $shippingOption->setMultiplier($weightCostMultiplier);
+        $this->basket->addShippingOption($shippingOption);
     }
 
 }

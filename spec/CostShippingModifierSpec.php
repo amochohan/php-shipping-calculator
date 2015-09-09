@@ -12,6 +12,11 @@ class CostShippingModifierSpec extends ObjectBehavior
         $this->shouldHaveType('CostShippingModifier');
     }
 
+    function it_implements_shipping_modifier_contract()
+    {
+        $this->shouldImplement('ShippingModifierContract');
+    }
+
     function it_has_a_cost()
     {
         $this->setCost(\Cost::fromFloat(10.0));

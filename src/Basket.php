@@ -10,6 +10,8 @@ class Basket
 
     private $allShippingOptions = [];
 
+    private $products = [];
+
     public function __construct()
     {
         $this->subTotal = \Cost::fromFloat(0.0);
@@ -71,6 +73,24 @@ class Basket
     public function shippingCost()
     {
         return $this->shippingOption->totalCost($this);
+    }
+
+    public function addProductWithQuantity(Product $product, $quantity)
+    {
+        for($i = 1; $i <= $quantity; $i++) {
+            $this->products[] = $product;
+        }
+        return $this;
+    }
+
+    public function noOfProducts()
+    {
+        return count($this->products);
+    }
+
+    public function removeAllProducts()
+    {
+        $this->products = [];
     }
 
 }

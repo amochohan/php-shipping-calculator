@@ -1,39 +1,17 @@
 <?php
 
-class WeightShippingModifier
+class WeightShippingModifier extends BaseShippingModifier implements ShippingModifierContract
 {
-    private $cost;
+    protected $cost;
 
-    private $minValue;
-    private $maxValue;
+    protected $minValue;
+    protected $maxValue;
 
     public function __construct()
     {
         $this->cost = \Cost::fromFloat(0.0);
         $this->minValue = \Weight::fromFloat(0.0);
         $this->maxValue = \Weight::fromFloat(0.0);
-    }
-
-    public function cost()
-    {
-        return $this->cost;
-    }
-
-    public function setCost(Cost $theCost)
-    {
-        $this->cost = $theCost;
-        return $this;
-    }
-
-    public function setMaxValue($value)
-    {
-        $this->maxValue = $value;
-    }
-
-    public function setMinValue($value)
-    {
-        $this->minValue = $value;
-        return $this;
     }
 
     public function isBasketTooHeavy(Basket $basket)
