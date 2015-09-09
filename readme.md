@@ -1,5 +1,10 @@
 ## PHP Shipping cost calculator
 
+### Usage
+
+Shipping cost is calculated either using a flat rate, or can be adjusted based on the total value of the a basket.
+The shipping cost can be hidden if the goods total or basket weight is above or below a given value.
+
 ### Development background
 
 This framework agnostic shipping calculator serves to illustrate how such a feature could be building, following 
