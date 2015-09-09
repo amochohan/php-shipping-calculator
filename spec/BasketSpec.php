@@ -103,4 +103,12 @@ class BasketSpec extends ObjectBehavior
 
     }
 
+    function it_calculates_the_shipping_cost()
+    {
+        $cost = \Cost::fromFloat(10.0);
+        $shippingOption = \ShippingOption::withNameAndFlatCost('Standard delivery', $cost);
+        $this->addShippingOption($shippingOption);
+        $this->applyShippingOption($shippingOption);
+        $this->shippingCost()->shouldBeLike($cost);
+    }
 }
