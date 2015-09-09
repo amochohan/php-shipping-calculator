@@ -11,6 +11,8 @@ class ShippingOption
 
     private $maximumBasketWeightAllowed;
 
+    private $modifiers;
+
     public static function withNameAndFlatCost($name, Cost $flatCost)
     {
         $shippingOption = new ShippingOption();
@@ -27,8 +29,17 @@ class ShippingOption
         return $shippingOption;
     }
 
-    public function totalCost()
+    public function totalCost(Basket $basket)
     {
+        if (! $this->costModifiersExist()) {
+            return $this->cost;
+        }
+        foreach($this->modifiers as $modifier) {
+            if ($modifier->isValidForBasket($basket)) {
+                return $modifier->cost();
+            }
+        }
+
         return $this->cost;
     }
 
@@ -85,4 +96,18 @@ class ShippingOption
         }
         return $weight->float() > $this->maximumBasketWeightAllowed->float();
     }
+
+    public function setModifier($modifier)
+    {
+        $this->modifiers[] = $modifier;
+    }
+
+    /**
+     * @return bool
+     */
+    private function costModifiersExist()
+    {
+        return sizeof($this->modifiers) > 0;
+    }
+
 }
