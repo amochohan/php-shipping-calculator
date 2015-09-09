@@ -97,7 +97,7 @@ class ShippingOption
         return $weight->float() > $this->maximumBasketWeightAllowed->float();
     }
 
-    public function setModifier($modifier)
+    public function addModifier($modifier)
     {
         $this->modifiers[] = $modifier;
     }

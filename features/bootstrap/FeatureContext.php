@@ -134,7 +134,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         array_map(function($option) use ($shippingOption, $costShippingModifier) {
             if($option->name() == $shippingOption->name()) {
-                $option->setModifier($costShippingModifier);
+                $option->addModifier($costShippingModifier);
             }
         }, $this->basket->allShippingOptions());
 
@@ -152,7 +152,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         array_map(function($option) use ($shippingOption, $costShippingModifier) {
             if($option->name() == $shippingOption->name()) {
-                $option->setModifier($costShippingModifier);
+                $option->addModifier($costShippingModifier);
             }
         }, $this->basket->allShippingOptions());
     }
@@ -168,7 +168,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
         array_map(function($option) use ($shippingOption, $costShippingModifier) {
             if($option->name() == $shippingOption->name()) {
-                $option->setModifier($costShippingModifier);
+                $option->addModifier($costShippingModifier);
             }
         }, $this->basket->allShippingOptions());
     }
