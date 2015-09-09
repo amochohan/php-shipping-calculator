@@ -147,5 +147,31 @@ class ShippingOptionSpec extends ObjectBehavior
         $this->addModifier($priceModifier);
     }
 
+    function it_sorts_applicable_modifiers_by_cost()
+    {
+        $standard = new \CostShippingModifier();
+        $cheap = new \CostShippingModifier();
+        $free = new \CostShippingModifier();
+        $expensive = new \CostShippingModifier();
+        $extortionate = new \CostShippingModifier();
+
+        $standard->setCost(\Cost::fromFloat(3.0));
+        $cheap->setCost(\Cost::fromFloat(2.0));
+        $free->setCost(\Cost::fromFloat(0.0));
+        $expensive->setCost(\Cost::fromFloat(10.0));
+        $extortionate->setCost(\Cost::fromFloat(100.0));
+
+        $modifiers = [$standard, $cheap, $extortionate, $free, $expensive];
+
+        $this->sortModifiersByCostDesc($modifiers)->shouldBeArray();
+        $this->sortModifiersByCostDesc($modifiers)->shouldHaveCount(5);
+
+        $this->sortModifiersByCostDesc($modifiers)[0]->cost()->float()->shouldEqual(100.0);
+        $this->sortModifiersByCostDesc($modifiers)[1]->cost()->float()->shouldEqual(10.0);
+        $this->sortModifiersByCostDesc($modifiers)[2]->cost()->float()->shouldEqual(3.0);
+        $this->sortModifiersByCostDesc($modifiers)[3]->cost()->float()->shouldEqual(2.0);
+        $this->sortModifiersByCostDesc($modifiers)[4]->cost()->float()->shouldEqual(0.0);
+
+    }
 
 }

@@ -34,13 +34,46 @@ class ShippingOption
         if (! $this->costModifiersExist()) {
             return $this->cost;
         }
-        foreach($this->modifiers as $modifier) {
+
+        $validModifiers = $this->sortModifiersByCostDesc($this->getApplicableModifiersForBasket($basket));
+
+        if($this->hasValidModifiers($validModifiers)) {
+            return $this->getFirstValidModifier($validModifiers)->cost();
+        }
+
+        // If none of the modifiers are applicable to the current
+        // basket state, then return the default base cost of
+        // the shipping option.
+        return $this->cost;
+    }
+
+    private function getApplicableModifiersForBasket($basket)
+    {
+        return array_filter($this->modifiers, function($modifier) use ($basket) {
             if ($modifier->isValidForBasket($basket)) {
                 return $modifier->cost();
             }
-        }
+        });
+    }
 
-        return $this->cost;
+    private function getFirstValidModifier($validModifiers)
+    {
+        return array_shift($validModifiers);
+    }
+
+    private function hasValidModifiers($validModifiers)
+    {
+        return (sizeof($validModifiers) > 0);
+    }
+
+    public function sortModifiersByCostDesc($modifiers)
+    {
+        usort($modifiers, ['ShippingOption', 'costSort']);
+        return $modifiers;
+    }
+
+    public static function costSort($modifierB,$modifierA) {
+        return $modifierA->cost()->float() == $modifierB->cost()->float() ? 0.0 : ( $modifierA->cost()->float() > $modifierB->cost()->float() ) ? 1 : -1;
     }
 
     public function name()

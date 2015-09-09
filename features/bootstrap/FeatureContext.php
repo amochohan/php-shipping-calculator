@@ -36,6 +36,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
 
     /**
      * @Transform :aWeight
+     * @Transform :minWeight
+     * @Transform :maxWeight
      */
     public function transformStringToAWeight($string)
     {
@@ -180,4 +182,62 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $this->basket->setSubTotal($totalCost);
     }
+
+    /**
+     * @Given the :shippingOption shipping option costs £:aCost for orders weighing under :aWeight
+     */
+    public function theShippingOptionCostsPsForOrdersWeighingUnderKg(ShippingOption $shippingOption, Cost $aCost, Weight $aWeight)
+    {
+        $shippingModifier = new WeightShippingModifier();
+        $shippingModifier->setCost($aCost);
+        $shippingModifier->setMaxValue($aWeight);
+
+        array_map(function($option) use ($shippingOption, $shippingModifier) {
+            if($option->name() == $shippingOption->name()) {
+                $option->addModifier($shippingModifier);
+            }
+        }, $this->basket->allShippingOptions());
+    }
+
+    /**
+     * @Given the :shippingOption shipping option costs £:aCost for orders weighing between :minWeight and :maxWeight
+     */
+    public function theShippingOptionCostsPsForOrdersWeighingBetweenKgAndKg(ShippingOption $shippingOption, Cost $aCost, Weight $minWeight, Weight $maxWeight)
+    {
+        $shippingModifier = new WeightShippingModifier();
+        $shippingModifier->setCost($aCost);
+        $shippingModifier->setMinValue($minWeight);
+        $shippingModifier->setMaxValue($maxWeight);
+
+        array_map(function($option) use ($shippingOption, $shippingModifier) {
+            if($option->name() == $shippingOption->name()) {
+                $option->addModifier($shippingModifier);
+            }
+        }, $this->basket->allShippingOptions());
+    }
+
+    /**
+     * @Given the :shippingOption shipping option costs £:aCost for orders weighing more than :aWeight
+     */
+    public function theShippingOptionCostsPsForOrdersWeighingMoreThanKg(ShippingOption $shippingOption, Cost $aCost, Weight $aWeight)
+    {
+        $shippingModifier = new WeightShippingModifier();
+        $shippingModifier->setCost($aCost);
+        $shippingModifier->setMinValue($aWeight);
+
+        array_map(function($option) use ($shippingOption, $shippingModifier) {
+            if($option->name() == $shippingOption->name()) {
+                $option->addModifier($shippingModifier);
+            }
+        }, $this->basket->allShippingOptions());
+    }
+
+    /**
+     * @When the basket contains goods that weigh :aWeight
+     */
+    public function theBasketContainsGoodsThatWeighKg(Weight $aWeight)
+    {
+        $this->basket->setWeight($aWeight);
+    }
+
 }
