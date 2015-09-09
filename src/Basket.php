@@ -2,7 +2,7 @@
 
 class Basket
 {
-    public $shippingOption;
+    private $shippingOption;
 
     private $subTotal;
 
@@ -16,14 +16,15 @@ class Basket
         $this->weight = \Weight::fromFloat(0.0);
     }
 
-    public function setSubTotal(Cost $subTotalCost)
-    {
-        $this->subTotal = $subTotalCost;
-    }
-
     public function subTotal()
     {
         return $this->subTotal;
+    }
+
+    public function setSubTotal(Cost $subTotalCost)
+    {
+        $this->subTotal = $subTotalCost;
+        return $this;
     }
 
     public function weight()
@@ -44,28 +45,32 @@ class Basket
     public function addShippingOption(ShippingOption $shippingOption)
     {
         $this->allShippingOptions[] = $shippingOption;
+        return $this;
+    }
+
+    public function appliedShippingOption()
+    {
+        return $this->shippingOption;
     }
 
     public function applyShippingOption(ShippingOption $shippingOption)
     {
         $this->shippingOption = $shippingOption;
+        return $this;
     }
 
     public function availableShippingMethods()
     {
-        $availableMethods = [];
-
-        foreach($this->allShippingOptions as $shippingOption) {
-            if($shippingOption->isAvailableToBasket($this)) {
-                $availableMethods[] = $shippingOption;
+        return array_filter($this->allShippingOptions, function($option) {
+            if ($option->isAvailableToBasket($this)) {
+                return $option;
             }
-        }
-
-        return $availableMethods;
+        });
     }
 
     public function shippingCost()
     {
         return $this->shippingOption->totalCost($this);
     }
+
 }
