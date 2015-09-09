@@ -46,6 +46,43 @@ its weight or the number of products it holds.
      
      // Add the modifier to the shipping option.
      $nextDayOption->addModifier($nextDayModifier);
+     
+     // Remember to add the shipping option to the basket
+     $basket->addShippingOption($nextDayOption);
+
+**Example:** Next day delivery has a flat rate cost of 8.99. However, if the basket weighs over 55.00(unit agnostic) of goods, this cost increases to 12.99.
+
+    // Set up the next day shipping option with its default price of 8.99
+     $nextDayOption = ShippingOption::withNameAndFlatCost('Next day', Cost::fromFloat(8.99));
+     
+     // Create a new modifier that changes the price based on the basket Weight
+     $nextDayModifier = new WeightShippingModifier();
+    
+     // Set the new cost of the option to 12.99
+     $nextDayModifier->setCost(Cost::fromFloat(12.99))
+         // When the minimum value (Weight, in this case) of the basket exceeds 55.0 
+         ->setMinValue(Cost::fromFloat(55.0));
+     
+     // Add the modifier to the shipping option.
+     $nextDayOption->addModifier($nextDayModifier);
+     
+     // Remember to add the shipping option to the basket
+     $basket->addShippingOption($nextDayOption);
+
+**Note:** Multiple modifiers can be added to each Shipping Option. Only valid modifiers according to the Cost, 
+product quantity and Weight of the basket are considered when calculating the shipping cost of a shipping option.
+
+#### Hiding a shipping option when the basket cost is above or below a specified value 
+
+It is sometimes useful to only offer a shipping option based on different scenarios. One example is, if the basket contains 
+products over a certain value, shipping must be done using a carrier that offers a higher level of insurance. This may be cost prohibitive on smaller value orders.
+
+    // Set up the exclusive shipping option with its default price of 8.99
+    $exclusiveOption = ShippingOption::withNameAndFlatCost('Exclusive', Cost::fromFloat(8.99));
+    
+    // Only allow the option to be used when the basket cost is over 100.0
+    $exclusiveOption->setMinimumGoodsCost(\Cost::fromFloat(100.0));
+
 
 ### Development background
 
