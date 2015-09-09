@@ -2,7 +2,7 @@
 
 class Basket
 {
-    protected $shippingOption;
+    public $shippingOption;
 
     private $subTotal;
 
@@ -62,5 +62,10 @@ class Basket
         }
 
         return $availableMethods;
+    }
+
+    public function shippingCost()
+    {
+        return $this->shippingOption->totalCost($this);
     }
 }
