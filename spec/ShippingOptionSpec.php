@@ -136,7 +136,7 @@ class ShippingOptionSpec extends ObjectBehavior
         $this->setMaximumBasketWeight(\Weight::fromFloat(50.0));
     }
 
-    function it_can_set_a_cost_modifier()
+    function it_can_add_a_cost_modifier()
     {
         $priceModifier = new \CostShippingModifier();
 
@@ -144,7 +144,7 @@ class ShippingOptionSpec extends ObjectBehavior
         $priceModifier->setMinValue(\Cost::fromFloat(10.0));
         $priceModifier->setMaxValue(\Cost::fromFloat(20.0));
 
-        $this->setModifier($priceModifier);
+        $this->addModifier($priceModifier);
     }
 
 
