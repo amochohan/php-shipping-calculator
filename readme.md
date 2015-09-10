@@ -1,5 +1,6 @@
 ## PHP Shipping cost calculator
 
+[![Build Status](https://travis-ci.org/drawmyattention/php-shipping-calculator.svg)](https://travis-ci.org/drawmyattention/php-shipping-calculator)
 
 ### Usage
 
