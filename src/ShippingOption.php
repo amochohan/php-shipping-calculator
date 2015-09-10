@@ -95,6 +95,11 @@ class ShippingOption
         return $this->name;
     }
 
+    public function isCalled($name)
+    {
+        return $this->name == $name;
+    }
+
     public function setMinimumGoodsCost(Cost $theMinimumCost)
     {
         $this->minimumGoodsCostRequired = $theMinimumCost;

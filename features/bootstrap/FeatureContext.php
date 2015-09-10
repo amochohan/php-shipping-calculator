@@ -74,11 +74,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theCustomerAppliesTheShippingOptionToTheBasket(ShippingOption $shippingOption)
     {
-        array_map(function($option) use ($shippingOption) {
-            if($option->name() == $shippingOption->name()) {
-                $this->basket->applyShippingOption($option);
-            }
-        }, $this->basket->allShippingOptions());
+        $option = $this->basket->getShippingOptionByName($shippingOption->name());
+        $this->basket->applyShippingOption($option);
     }
 
     /**
@@ -130,12 +127,9 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theShippingOptionIsOnlyAvailableForOrdersWeighingOver(ShippingOption $shippingOption, Weight $aWeight)
     {
-        //$shippingOption->setMinimumBasketWeight($aWeight);
-        array_map(function($option) use ($shippingOption, $aWeight) {
-            if($option->name() == $shippingOption->name()) {
-                $option->setMinimumBasketWeight($aWeight);
-            }
-        }, $this->basket->allShippingOptions());
+        $option = $this->basket->getShippingOptionByName($shippingOption->name());
+        $option->setMinimumBasketWeight($aWeight);
+        $this->basket->applyShippingOption($option);
     }
 
     /**
@@ -151,16 +145,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theShippingOptionCostsForOrdersLessThan(ShippingOption $shippingOption, Cost $aCost, $totalCost)
     {
-        $costShippingModifier = new CostShippingModifier();
-        $costShippingModifier->setCost($aCost);
-        $costShippingModifier->setMaxValue($totalCost);
+        $modifier = new CostShippingModifier();
+        $modifier->setCost($aCost);
+        $modifier->setMaxValue($totalCost);
 
-        array_map(function($option) use ($shippingOption, $costShippingModifier) {
-            if($option->name() == $shippingOption->name()) {
-                $option->addModifier($costShippingModifier);
-            }
-        }, $this->basket->allShippingOptions());
-
+        $option = $this->basket->getShippingOptionByName($shippingOption->name());
+        $option->addModifier($modifier);
     }
 
     /**
@@ -168,16 +158,13 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theShippingOptionCostsForOrdersBetweenAnd(ShippingOption $shippingOption, Cost $aCost, Cost $minCost, Cost $maxCost)
     {
-        $costShippingModifier = new CostShippingModifier();
-        $costShippingModifier->setCost($aCost);
-        $costShippingModifier->setMinValue($minCost);
-        $costShippingModifier->setMaxValue($maxCost);
+        $modifier = new CostShippingModifier();
+        $modifier->setCost($aCost);
+        $modifier->setMinValue($minCost);
+        $modifier->setMaxValue($maxCost);
 
-        array_map(function($option) use ($shippingOption, $costShippingModifier) {
-            if($option->name() == $shippingOption->name()) {
-                $option->addModifier($costShippingModifier);
-            }
-        }, $this->basket->allShippingOptions());
+        $option = $this->basket->getShippingOptionByName($shippingOption->name());
+        $option->addModifier($modifier);
     }
 
     /**
@@ -185,15 +172,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theShippingOptionCostsForOrdersMoreThan(ShippingOption $shippingOption, Cost $aCost, Cost $totalCost)
     {
-        $costShippingModifier = new CostShippingModifier();
-        $costShippingModifier->setCost($aCost);
-        $costShippingModifier->setMinValue($totalCost);
+        $modifier = new CostShippingModifier();
+        $modifier->setCost($aCost);
+        $modifier->setMinValue($totalCost);
 
-        array_map(function($option) use ($shippingOption, $costShippingModifier) {
-            if($option->name() == $shippingOption->name()) {
-                $option->addModifier($costShippingModifier);
-            }
-        }, $this->basket->allShippingOptions());
+        $option = $this->basket->getShippingOptionByName($shippingOption->name());
+        $option->addModifier($modifier);
     }
 
     /**
@@ -209,15 +193,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theShippingOptionCostsPsForOrdersWeighingUnderKg(ShippingOption $shippingOption, Cost $aCost, Weight $aWeight)
     {
-        $shippingModifier = new WeightShippingModifier();
-        $shippingModifier->setCost($aCost);
-        $shippingModifier->setMaxValue($aWeight);
+        $modifier = new WeightShippingModifier();
+        $modifier->setCost($aCost);
+        $modifier->setMaxValue($aWeight);
 
-        array_map(function($option) use ($shippingOption, $shippingModifier) {
-            if($option->name() == $shippingOption->name()) {
-                $option->addModifier($shippingModifier);
-            }
-        }, $this->basket->allShippingOptions());
+        $option = $this->basket->getShippingOptionByName($shippingOption->name());
+        $option->addModifier($modifier);
     }
 
     /**
@@ -225,16 +206,13 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theShippingOptionCostsPsForOrdersWeighingBetweenKgAndKg(ShippingOption $shippingOption, Cost $aCost, Weight $minWeight, Weight $maxWeight)
     {
-        $shippingModifier = new WeightShippingModifier();
-        $shippingModifier->setCost($aCost);
-        $shippingModifier->setMinValue($minWeight);
-        $shippingModifier->setMaxValue($maxWeight);
+        $modifier = new WeightShippingModifier();
+        $modifier->setCost($aCost);
+        $modifier->setMinValue($minWeight);
+        $modifier->setMaxValue($maxWeight);
 
-        array_map(function($option) use ($shippingOption, $shippingModifier) {
-            if($option->name() == $shippingOption->name()) {
-                $option->addModifier($shippingModifier);
-            }
-        }, $this->basket->allShippingOptions());
+        $option = $this->basket->getShippingOptionByName($shippingOption->name());
+        $option->addModifier($modifier);
     }
 
     /**
@@ -242,15 +220,12 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theShippingOptionCostsPsForOrdersWeighingMoreThanKg(ShippingOption $shippingOption, Cost $aCost, Weight $aWeight)
     {
-        $shippingModifier = new WeightShippingModifier();
-        $shippingModifier->setCost($aCost);
-        $shippingModifier->setMinValue($aWeight);
+        $modifier = new WeightShippingModifier();
+        $modifier->setCost($aCost);
+        $modifier->setMinValue($aWeight);
 
-        array_map(function($option) use ($shippingOption, $shippingModifier) {
-            if($option->name() == $shippingOption->name()) {
-                $option->addModifier($shippingModifier);
-            }
-        }, $this->basket->allShippingOptions());
+        $option = $this->basket->getShippingOptionByName($shippingOption->name());
+        $option->addModifier($modifier);
     }
 
     /**
@@ -270,11 +245,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $modifier->setCost($aCost);
         $modifier->setMaxValue($quantity);
 
-        array_map(function($option) use ($shippingOption, $modifier) {
-            if($option->name() == $shippingOption->name()) {
-                $option->addModifier($modifier);
-            }
-        }, $this->basket->allShippingOptions());
+        $option = $this->basket->getShippingOptionByName($shippingOption->name());
+        $option->addModifier($modifier);
     }
 
     /**
@@ -287,11 +259,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $modifier->setMinValue($minQuantity);
         $modifier->setMaxValue($maxQuantity);
 
-        array_map(function($option) use ($shippingOption, $modifier) {
-            if($option->name() == $shippingOption->name()) {
-                $option->addModifier($modifier);
-            }
-        }, $this->basket->allShippingOptions());
+        $option = $this->basket->getShippingOptionByName($shippingOption->name());
+        $option->addModifier($modifier);
     }
 
     /**
@@ -303,11 +272,8 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $modifier->setCost($aCost);
         $modifier->setMinValue($quantity);
 
-        array_map(function($option) use ($shippingOption, $modifier) {
-            if($option->name() == $shippingOption->name()) {
-                $option->addModifier($modifier);
-            }
-        }, $this->basket->allShippingOptions());
+        $option = $this->basket->getShippingOptionByName($shippingOption->name());
+        $option->addModifier($modifier);
     }
 
     /**
@@ -316,7 +282,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
     public function theBasketContainsProducts($quantity)
     {
         $this->basket->addProductWithQuantity(new Product(), $quantity);
-
     }
 
     /**
@@ -328,7 +293,6 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $shippingOption->setMultiplier($weightCostMultiplier);
         $this->basket->addShippingOption($shippingOption);
     }
-
 
     /**
      * @Then the :shippingOption shipping option can be used
@@ -348,4 +312,5 @@ class FeatureContext implements Context, SnippetAcceptingContext
         }
         return false;
     }
+
 }

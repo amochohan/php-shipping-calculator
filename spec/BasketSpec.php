@@ -158,4 +158,20 @@ class BasketSpec extends ObjectBehavior
         $this->removeAllProducts();
         $this->noOfProducts()->shouldReturn(0);
     }
+
+    function it_gets_a_shipping_option_from_all_options_by_name()
+    {
+        $standard = \ShippingOption::withNameAndFlatCost('Standard delivery', \Cost::fromFloat(5.0));
+        $nextDay = \ShippingOption::withNameAndFlatCost('Next day delivery', \Cost::fromFloat(10.0));
+        $slow = \ShippingOption::withNameAndFlatCost('Next day delivery', \Cost::fromFloat(2.0));
+
+        $this->addShippingOption($standard);
+        $this->addShippingOption($nextDay);
+        $this->addShippingOption($slow);
+
+        $this->getShippingOptionByName('Next day delivery')->shouldReturn($nextDay);
+        $this->getShippingOptionByName('Instant delivery')->shouldReturn(null);
+        $this->getShippingOptionByName('Standard delivery')->shouldReturn($standard);
+
+    }
 }

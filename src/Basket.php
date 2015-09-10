@@ -93,4 +93,14 @@ class Basket
         $this->products = [];
     }
 
+    public function getShippingOptionByName($name)
+    {
+        foreach($this->allShippingOptions as $option) {
+            if ($option->isCalled($name)) {
+                return $option;
+            }
+        }
+        return null;
+    }
+
 }
