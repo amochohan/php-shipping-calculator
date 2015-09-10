@@ -41,8 +41,24 @@ Feature: Calculate the total shipping cost of a basket
     And the "Next day (light)" shipping option is only available for orders weighing under 10kg
     And there is a shipping option called "Next day (heavy)" with a flat cost of £10
     And the "Next day (heavy)" shipping option is only available for orders weighing under 30kg
+    And there is a shipping option called "3-5 day (medium)" with a flat cost of £8
+    And the "3-5 day (medium)" shipping option is only available for orders weighing under 20kg
     When the basket contains goods with a total weight of 15kg
     Then the "Next day (light)" shipping option can not be used
+    And the "Next day (heavy)" shipping option can be used
+    And the "3-5 day (medium)" shipping option can be used
+
+  Scenario: A shipping option can be hidden if the basket weight is above a threshold
+    Given there is a shipping option called "Next day (light)" with a flat cost of £10
+    And the "Next day (light)" shipping option is only available for orders weighing under 10kg
+    And there is a shipping option called "Next day (heavy)" with a flat cost of £10
+    And the "Next day (heavy)" shipping option is only available for orders weighing over 10kg
+    And there is a shipping option called "3-5 day (medium)" with a flat cost of £8
+    And the "3-5 day (medium)" shipping option is only available for orders weighing over 16kg
+    When the basket contains goods with a total weight of 15kg
+    Then the "Next day (heavy)" shipping option can be used
+    And the "Next day (light)" shipping option can not be used
+    And the "3-5 day (medium)" shipping option can not be used
 
   Scenario: A shipping option can have a sliding price scale based on the basket total
     Given there is a shipping option called "Standard delivery" with a flat cost of £0

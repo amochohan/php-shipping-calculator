@@ -126,6 +126,19 @@ class FeatureContext implements Context, SnippetAcceptingContext
     }
 
     /**
+     * @Given the :shippingOption shipping option is only available for orders weighing over :aWeight
+     */
+    public function theShippingOptionIsOnlyAvailableForOrdersWeighingOver(ShippingOption $shippingOption, Weight $aWeight)
+    {
+        //$shippingOption->setMinimumBasketWeight($aWeight);
+        array_map(function($option) use ($shippingOption, $aWeight) {
+            if($option->name() == $shippingOption->name()) {
+                $option->setMinimumBasketWeight($aWeight);
+            }
+        }, $this->basket->allShippingOptions());
+    }
+
+    /**
      * @When the basket contains goods with a total weight of :aWeight:kg
      */
     public function theBasketContainsGoodsWithATotalWeightOf(Weight $aWeight)
@@ -316,4 +329,23 @@ class FeatureContext implements Context, SnippetAcceptingContext
         $this->basket->addShippingOption($shippingOption);
     }
 
+
+    /**
+     * @Then the :shippingOption shipping option can be used
+     */
+    public function theShippingOptionCanBeUsed(ShippingOption $shippingOption)
+    {
+        PHPUnit_Framework_Assert::assertContainsOnlyInstancesOf('ShippingOption', $this->basket->availableShippingMethods());
+        PHPUnit_Framework_Assert::assertTrue($this->assertArrayContainsSameOptionByName($this->basket->availableShippingMethods(), $shippingOption->name()));
+    }
+
+    private function assertArrayContainsSameOptionByName($theArray, $optionName)
+    {
+        foreach($theArray as $arrayItem) {
+            if($arrayItem->name() == $optionName) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -10,6 +10,7 @@ class ShippingOption
     private $maximumGoodsCostAllowed;
 
     private $maximumBasketWeightAllowed;
+    private $minimumBasketWeightRequired;
 
     private $modifiers;
 
@@ -27,6 +28,7 @@ class ShippingOption
         $shippingOption->maximumGoodsCostAllowed = \Cost::fromFloat(0.0);
 
         $shippingOption->maximumBasketWeightAllowed = \Weight::fromFloat(0.0);
+        $shippingOption->minimumBasketWeightRequired = \Weight::fromFloat(0.0);
 
 //        $shippingOption->multiplier = \Multiplier::fromFloat(0.0);
 
@@ -119,7 +121,8 @@ class ShippingOption
     {
         return (! $this->isBasketTooCheap($basket->subTotal()) &&
             ! $this->isBasketTooExpensive($basket->subTotal()) &&
-            ! $this->isBasketTooHeavy($basket->weight()));
+            ! $this->isBasketTooHeavy($basket->weight()) &&
+            ! $this->isBasketToolight($basket->weight()));
     }
 
     public function setMaximumGoodsCostAllowed(Cost $theMaximumCost)
@@ -167,6 +170,20 @@ class ShippingOption
         return \Cost::fromFloat(
             $this->multiplier->multipliedCost($basket)->float() + $this->cost->float()
         );
+    }
+
+    public function setMinimumBasketWeight(Weight $weight)
+    {
+        $this->minimumBasketWeightRequired = $weight;
+        return $this;
+    }
+
+    public function isBasketTooLight(Weight $weight)
+    {
+        if ($this->minimumBasketWeightRequired->float() == 0) {
+            return false;
+        }
+        return $weight->float() < $this->minimumBasketWeightRequired->float();
     }
 
 }

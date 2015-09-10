@@ -136,6 +136,46 @@ class ShippingOptionSpec extends ObjectBehavior
         $this->setMaximumBasketWeight(\Weight::fromFloat(50.0));
     }
 
+    function it_can_set_a_minimum_basket_weight_before_becoming_available()
+    {
+        $this->setMinimumBasketWeight(\Weight::fromFloat(10.0));
+    }
+
+    function it_can_determine_if_a_basket_is_too_light_to_use_the_shipping_option()
+    {
+        $this->basket->setWeight(\Weight::fromFloat(9.0));
+        $this->setMinimumBasketWeight(\Weight::fromFloat(10.0));
+        $this->isBasketTooLight($this->basket->weight())->shouldReturn(true);
+
+        $this->basket->setWeight(\Weight::fromFloat(10.0));
+        $this->isBasketTooLight($this->basket->weight())->shouldReturn(false);
+
+        $this->basket->setWeight(\Weight::fromFloat(11.0));
+        $this->isBasketTooLight($this->basket->weight())->shouldReturn(false);
+    }
+
+    function it_is_enabled_if_the_basket_weight_is_equal_or_between_the_min_and_max_basket_weight_allowed()
+    {
+        $this->setMinimumBasketWeight(\Weight::fromFloat(10.0));
+        $this->setMaximumBasketWeight(\Weight::fromFloat(20.0));
+
+        $this->basket->setWeight(\Weight::fromFloat(15.0));
+        $this->isAvailableToBasket($this->basket)->shouldReturn(true);
+
+        $this->basket->setWeight(\Weight::fromFloat(10.0));
+        $this->isAvailableToBasket($this->basket)->shouldReturn(true);
+
+        $this->basket->setWeight(\Weight::fromFloat(20.0));
+        $this->isAvailableToBasket($this->basket)->shouldReturn(true);
+
+        $this->basket->setWeight(\Weight::fromFloat(9.0));
+        $this->isAvailableToBasket($this->basket)->shouldReturn(false);
+
+        $this->basket->setWeight(\Weight::fromFloat(21.0));
+        $this->isAvailableToBasket($this->basket)->shouldReturn(false);
+    }
+
+
     function it_can_add_a_cost_modifier()
     {
         $priceModifier = new \CostShippingModifier();
