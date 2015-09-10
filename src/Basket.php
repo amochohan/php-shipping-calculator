@@ -1,5 +1,7 @@
 <?php
 
+namespace DrawMyAttention\ShippingCalculator;
+
 class Basket
 {
     private $shippingOption;
@@ -14,8 +16,8 @@ class Basket
 
     public function __construct()
     {
-        $this->subTotal = \Cost::fromFloat(0.0);
-        $this->weight = \Weight::fromFloat(0.0);
+        $this->subTotal = Cost::fromFloat(0.0);
+        $this->weight = Weight::fromFloat(0.0);
     }
 
     public function subTotal()

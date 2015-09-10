@@ -1,5 +1,7 @@
 <?php
 
+namespace DrawMyAttention\ShippingCalculator;
+
 interface ShippingModifierContract
 {
     /**

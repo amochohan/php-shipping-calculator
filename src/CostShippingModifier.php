@@ -1,5 +1,7 @@
 <?php
 
+namespace DrawMyAttention\ShippingCalculator;
+
 class CostShippingModifier extends BaseShippingModifier implements ShippingModifierContract
 {
     protected $cost;
@@ -10,9 +12,9 @@ class CostShippingModifier extends BaseShippingModifier implements ShippingModif
 
     public function __construct()
     {
-        $this->minValue = \Cost::fromFloat(0.0);
-        $this->maxValue = \Cost::fromFloat(0.0);
-        $this->cost     = \Cost::fromFloat(0.0);
+        $this->minValue = Cost::fromFloat(0.0);
+        $this->maxValue = Cost::fromFloat(0.0);
+        $this->cost     = Cost::fromFloat(0.0);
     }
 
     public function isValidForBasket(Basket $basket)

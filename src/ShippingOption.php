@@ -1,5 +1,7 @@
 <?php
 
+namespace DrawMyAttention\ShippingCalculator;
+
 class ShippingOption
 {
     private $name;
@@ -24,11 +26,11 @@ class ShippingOption
 
         $shippingOption->cost = $flatCost;
 
-        $shippingOption->minimumGoodsCostRequired = \Cost::fromFloat(0.0);
-        $shippingOption->maximumGoodsCostAllowed = \Cost::fromFloat(0.0);
+        $shippingOption->minimumGoodsCostRequired = Cost::fromFloat(0.0);
+        $shippingOption->maximumGoodsCostAllowed = Cost::fromFloat(0.0);
 
-        $shippingOption->maximumBasketWeightAllowed = \Weight::fromFloat(0.0);
-        $shippingOption->minimumBasketWeightRequired = \Weight::fromFloat(0.0);
+        $shippingOption->maximumBasketWeightAllowed = Weight::fromFloat(0.0);
+        $shippingOption->minimumBasketWeightRequired = Weight::fromFloat(0.0);
 
 //        $shippingOption->multiplier = \Multiplier::fromFloat(0.0);
 
@@ -82,7 +84,7 @@ class ShippingOption
 
     public function sortModifiersByCostDesc($modifiers)
     {
-        usort($modifiers, ['ShippingOption', 'costSort']);
+        usort($modifiers, ['DrawMyAttention\ShippingCalculator\ShippingOption', 'costSort']);
         return $modifiers;
     }
 
@@ -172,7 +174,7 @@ class ShippingOption
 
     private function applyMultiplierToCost(Basket $basket)
     {
-        return \Cost::fromFloat(
+        return Cost::fromFloat(
             $this->multiplier->multipliedCost($basket)->float() + $this->cost->float()
         );
     }

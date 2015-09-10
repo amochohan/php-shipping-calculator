@@ -1,5 +1,7 @@
 <?php
 
+namespace DrawMyAttention\ShippingCalculator;
+
 class WeightCostMultiplier
 {
     private $float;

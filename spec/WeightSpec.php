@@ -1,6 +1,6 @@
 <?php
 
-namespace spec;
+namespace spec\DrawMyAttention\ShippingCalculator;
 
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -14,7 +14,7 @@ class WeightSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType('Weight');
+        $this->shouldHaveType('DrawMyAttention\ShippingCalculator\Weight');
     }
 
     function it_returns_a_float_value()

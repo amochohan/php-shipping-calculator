@@ -15,8 +15,8 @@
     ],
     "require": {},
     "autoload": {
-        "psr-0": {
-             "": "src/"
+        "psr-4": {
+             "DrawMyAttention\\ShippingCalculator\\": "src/"
         }
      }
 }

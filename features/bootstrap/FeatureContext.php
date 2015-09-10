@@ -5,6 +5,15 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
+use DrawMyAttention\ShippingCalculator\Basket;
+use DrawMyAttention\ShippingCalculator\Cost;
+use DrawMyAttention\ShippingCalculator\CostShippingModifier;
+use DrawMyAttention\ShippingCalculator\Product;
+use DrawMyAttention\ShippingCalculator\ProductQuantityShippingModifier;
+use DrawMyAttention\ShippingCalculator\ShippingOption;
+use DrawMyAttention\ShippingCalculator\Weight;
+use DrawMyAttention\ShippingCalculator\WeightCostMultiplier;
+use DrawMyAttention\ShippingCalculator\WeightShippingModifier;
 
 /**
  * Defines application features from the specific context.
@@ -101,7 +110,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
     {
         $availableMethods = $this->basket->availableShippingMethods();
 
-        PHPUnit_Framework_Assert::assertContainsOnlyInstancesOf('ShippingOption', $availableMethods);
+        PHPUnit_Framework_Assert::assertContainsOnlyInstancesOf('DrawMyAttention\ShippingCalculator\ShippingOption', $availableMethods);
         PHPUnit_Framework_Assert::assertNotContains($shippingOption, $availableMethods);
     }
 
@@ -299,7 +308,7 @@ class FeatureContext implements Context, SnippetAcceptingContext
      */
     public function theShippingOptionCanBeUsed(ShippingOption $shippingOption)
     {
-        PHPUnit_Framework_Assert::assertContainsOnlyInstancesOf('ShippingOption', $this->basket->availableShippingMethods());
+        PHPUnit_Framework_Assert::assertContainsOnlyInstancesOf('DrawMyAttention\ShippingCalculator\ShippingOption', $this->basket->availableShippingMethods());
         PHPUnit_Framework_Assert::assertTrue($this->assertArrayContainsSameOptionByName($this->basket->availableShippingMethods(), $shippingOption->name()));
     }
 

@@ -1,5 +1,7 @@
 <?php
 
+namespace DrawMyAttention\ShippingCalculator;
+
 class ProductQuantityShippingModifier extends BaseShippingModifier implements ShippingModifierContract
 {
     protected $cost;
@@ -9,7 +11,7 @@ class ProductQuantityShippingModifier extends BaseShippingModifier implements Sh
 
     public function __construct()
     {
-        $this->cost = \Cost::fromFloat(0.0);
+        $this->cost = Cost::fromFloat(0.0);
         $this->minValue = 0;
         $this->maxValue = 0;
     }

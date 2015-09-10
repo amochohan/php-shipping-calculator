@@ -1,0 +1,5 @@
+suites:
+    default:
+        namespace: DrawMyAttention\ShippingCalculator
+        psr4_prefix: DrawMyAttention\ShippingCalculator
+        spec_prefix: spec
